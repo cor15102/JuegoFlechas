@@ -66,6 +66,8 @@ uint8_t velocidad = 0;  // VELOCIDAD ESCOGIDA
 uint8_t cont1 = 0;      // PUNTOS DE JUGADOR 1
 uint8_t cont2 = 0;      // PUNTOS DE JUGADOR 2
 
+int buzzer = 40;
+
 const char* keg[10] = {"0","1","2","3","4","5","6","7","8","9"};
 
 
@@ -81,6 +83,9 @@ const char* keg[10] = {"0","1","2","3","4","5","6","7","8","9"};
 #define D2 PF_4
 #define L2 PA_3
 #define R2 PA_2
+
+#define nota_1 500
+#define nota_2 800
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // SETUP
@@ -96,6 +101,8 @@ void setup(void)
   pinMode(D2, INPUT);
   pinMode(L2, INPUT);
   pinMode(R2, INPUT);
+
+  pinMode(buzzer,OUTPUT); // Pin conectado al Buzzer PF2
 
   // INICIAMOS COMUNICACIÓN SERIAL
   Serial.begin(9600);
@@ -268,10 +275,10 @@ inicio:
 
     LCD_Clear(0x0000);                    // PINTO PANTALA DE un color
 
-    LCD_Bitmap(289, 0, 30, 30, GI);       // MUESTRO FLECHA izquierda EN PANTALLA
+    LCD_Bitmap(290, 0, 30, 30, GI);       // MUESTRO FLECHA izquierda EN PANTALLA
     LCD_Bitmap(290, 30, 30, 30, GU);      // MUESTRO FLECHA arriba EN PANTALLA
-    LCD_Bitmap(290, 60, 30, 30, GD);      // MUESTRO FLECHA derecha EN PANTALLA
-    LCD_Bitmap(290, 90, 30, 30, GR);      // MUESTRO FLECHA abajo EN PANTALLA
+    LCD_Bitmap(290, 60, 30, 30, GD);      // MUESTRO FLECHA abajo EN PANTALLA
+    LCD_Bitmap(290, 90, 30, 30, GR);      // MUESTRO FLECHA derecha EN PANTALLA
     FillRect(0, 120, 290, 1, 0xFFFF);       // MUESTRO LINEA DIVISORA
     LCD_Bitmap(290, 121, 30, 30, GI);     // MUESTRO FLECHA EN PANTALLA
     LCD_Bitmap(290, 150, 30, 30, GU);     // MUESTRO FLECHA EN PANTALLA
@@ -288,9 +295,9 @@ inicio:
     while (z == 4) 
     {
       for (general = 0; general < 5; general++) {     // FOR PARA CUMPLIR LAS 20 FLECHAS
-        //randomSeed(analogRead(0));
-        //y = random(1, 5);                             // GENERO NÚMERO ALEATORIO ENTRE 1 Y 4
-        y = 1;
+        randomSeed(analogRead(0));
+        y = random(1, 5);                             // GENERO NÚMERO ALEATORIO ENTRE 1 Y 4
+        //y = 1;
         
         switch (y) {                                  // SWITCH PARA VER QUE FLECHA SALIÓ
           case 1:    // MUESTRO FLECHA IZQUIERDAAAAAA
@@ -334,12 +341,14 @@ inicio:
             {
               cont1++;
               LCD_Bitmap(290, 0, 30, 30, DI);           // MUESTRO FLECHA PARA INDICADORA DE PRESIONAR
+              beep(nota_1,500);
             }
 
             if (q2 == HIGH && estado2 == 0)
             {
               cont2++;
               LCD_Bitmap(290, 120, 30, 30, DI);         // MUESTRO FLECHA PARA INDICADORA DE PRESIONAR
+              beep(nota_2,500);
             }
 
             q1 = LOW;  // Reiniciamos la lectura digital
@@ -355,21 +364,46 @@ inicio:
               LCD_Bitmap(x, 150, 30, 30, GU);         // MUESTRO FLECHA EN POSICIÓN INDICADA PARA JUGADOR 2
               x = x + 30;                             // AVANZO LA FLECHA A SIGUIENTE POSICIÓN
               delay(velocidad);                       // ESPERAR PARA MOSTRAR LA SIGUIENTE FLECHA
-            }
 
+              q1 = digitalRead(U1);
+              q2 = digitalRead(U2);
+
+              if (q1 == HIGH && x <= 260)
+              {
+                estado1 = 1;
+              }
+
+              if (q1 == LOW && x > 260)
+              {
+                estado1 = 0;
+              }
+
+              if (q2 == LOW && x <= 260)
+              {
+                estado2 = 1;
+              }
+
+              if (q2 == LOW && x > 260)
+              {
+                estado2 = 0;
+              }
+            } //  ==== Cierra el FOR =====
+            
             q1 = digitalRead(U1);
             q2 = digitalRead(U2);
 
-            if (q1 == HIGH)
+            if (q1 == HIGH && estado1 == 0)
             {
               cont1++;
-              LCD_Bitmap(290, 30, 30, 30, DU);          // MUESTRO FLECHA PARA INDICADORA DE PRESIONAR
+              LCD_Bitmap(290, 30, 30, 30, DU);           // MUESTRO FLECHA PARA INDICADORA DE PRESIONAR
+              beep(nota_1,500);
             }
 
-            if (q2 == HIGH)
+            if (q2 == HIGH && estado2 == 0)
             {
               cont2++;
               LCD_Bitmap(290, 150, 30, 30, DU);         // MUESTRO FLECHA PARA INDICADORA DE PRESIONAR
+              beep(nota_2,500);
             }
 
             q1 = LOW;  // Reiniciamos la lectura digital
@@ -378,28 +412,53 @@ inicio:
 
           case 3:   // MUESTRO FLECHA abajooooooo
           
-            for (x = 11; x <= 290; x++) {             // MOVER LA FLECHA HASTA QUE LLEGUE A POSICIÓN INDICADA
+            for (x = 11; x <= 290; x++) {             // abajo MOVER LA FLECHA HASTA QUE LLEGUE A POSICIÓN INDICADA
               FillRect(x - 30, 60, 30, 30, 0x00);     // OCULTO FLECHA ANTES DESPLEGADA PARA JUGADOR 1
               FillRect(x - 30, 180, 30, 30, 0x00);    // OCULTO FLECHA ANTES DESPLEGADA PARA JUGADOR 2
               LCD_Bitmap(x, 60, 30, 30, GD);          // MUESTRO FLECHA EN POSICIÓN INDICADA PARA JUGADOR 1
               LCD_Bitmap(x, 180, 30, 30, GD);         // MUESTRO FLECHA EN POSICIÓN INDICADA PARA JUGADOR 2
               x = x + 30;                             // AVANZO LA FLECHA A SIGUIENTE POSICIÓN
               delay(velocidad);                       // ESPERAR PARA MOSTRAR LA SIGUIENTE FLECHA
-            }
 
+              q1 = digitalRead(D1);
+              q2 = digitalRead(D2);
+
+              if (q1 == HIGH && x <= 260)
+              {
+                estado1 = 1;
+              }
+
+              if (q1 == LOW && x > 260)
+              {
+                estado1 = 0;
+              }
+
+              if (q2 == LOW && x <= 260)
+              {
+                estado2 = 1;
+              }
+
+              if (q2 == LOW && x > 260)
+              {
+                estado2 = 0;
+              }
+            } //  ==== Cierra el FOR =====
+            
             q1 = digitalRead(D1);
             q2 = digitalRead(D2);
 
-            if (q1 == HIGH)
+            if (q1 == HIGH && estado1 == 0)
             {
               cont1++;
-              LCD_Bitmap(290, 60, 30, 30, DD);          // MUESTRO FLECHA PARA INDICADORA DE PRESIONAR
+              LCD_Bitmap(290, 60, 30, 30, DD);           // MUESTRO FLECHA PARA INDICADORA DE PRESIONAR
+              beep(nota_1,500);
             }
 
-            if (q2 == HIGH)
+            if (q2 == HIGH && estado2 == 0)
             {
               cont2++;
               LCD_Bitmap(290, 180, 30, 30, DD);         // MUESTRO FLECHA PARA INDICADORA DE PRESIONAR
+              beep(nota_2,500);
             }
 
             q1 = LOW;  // Reiniciamos la lectura digital
@@ -408,28 +467,53 @@ inicio:
 
           case 4:   // MUESTRO FLECHA derechaaaaa
           
-            for (x = 11; x <= 290; x++) {             // MOVER LA FLECHA HASTA QUE LLEGUE A POSICIÓN INDICADA
+            for (x = 11; x <= 290; x++) {             // derecha MOVER LA FLECHA HASTA QUE LLEGUE A POSICIÓN INDICADA
               FillRect(x - 30, 90, 30, 30, 0x00);     // OCULTO FLECHA ANTES DESPLEGADA PARA JUGADOR 1
               FillRect(x - 30, 210, 30, 30, 0x00);    // OCULTO FLECHA ANTES DESPLEGADA PARA JUGADOR 2
               LCD_Bitmap(x, 90, 30, 30, GR);          // MUESTRO FLECHA EN POSICIÓN INDICADA PARA JUGADOR 1
               LCD_Bitmap(x, 210, 30, 30, GR);         // MUESTRO FLECHA EN POSICIÓN INDICADA PARA JUGADOR 2
               x = x + 30;                             // AVANZO LA FLECHA A SIGUIENTE POSICIÓN
               delay(velocidad);                       // ESPERAR PARA MOSTRAR LA SIGUIENTE FLECHA
-            }
 
+              q1 = digitalRead(R1);
+              q2 = digitalRead(R2);
+
+              if (q1 == HIGH && x <= 260)
+              {
+                estado1 = 1;
+              }
+
+              if (q1 == LOW && x > 260)
+              {
+                estado1 = 0;
+              }
+
+              if (q2 == LOW && x <= 260)
+              {
+                estado2 = 1;
+              }
+
+              if (q2 == LOW && x > 260)
+              {
+                estado2 = 0;
+              }
+            } //  ==== Cierra el FOR =====
+            
             q1 = digitalRead(R1);
             q2 = digitalRead(R2);
 
-            if (q1 == HIGH)
+            if (q1 == HIGH && estado1 == 0)
             {
               cont1++;
-              LCD_Bitmap(290, 90, 30, 30, DR);          // MUESTRO FLECHA PARA INDICADORA DE PRESIONAR
+              LCD_Bitmap(290, 90, 30, 30, DR);           // MUESTRO FLECHA PARA INDICADORA DE PRESIONAR
+              beep(nota_1,500);
             }
 
-            if (q2 == HIGH)
+            if (q2 == HIGH && estado2 == 0)
             {
               cont2++;
               LCD_Bitmap(290, 210, 30, 30, DR);         // MUESTRO FLECHA PARA INDICADORA DE PRESIONAR
+              beep(nota_2,500);
             }
 
             q1 = LOW;  // Reiniciamos la lectura digital
@@ -859,4 +943,12 @@ void LCD_Sprite(int x, int y, int width, int height, unsigned char bitmap[], int
 
   }
   digitalWrite(LCD_CS, HIGH);
+}
+
+void beep(int note, int duration)
+{
+  tone(buzzer, note, duration/2);
+  delay(duration/2);
+  noTone(buzzer);
+  delay(duration/2 + 20);  
 }
