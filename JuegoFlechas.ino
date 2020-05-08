@@ -86,6 +86,9 @@ const char* keg[10] = {"0","1","2","3","4","5","6","7","8","9"};
 
 #define nota_1 500
 #define nota_2 800
+#define si_  987
+#define la_  880
+#define sol_ 830
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // SETUP
@@ -127,6 +130,7 @@ inicio:
   {
     uint8_t lectura = LOW;    // INICIALIZO VARIABLE
     uint8_t q = 0;            // INICIALIZO VARIABLE
+    uint8_t keg = 0;
 
     while (z == 1) 
     {                                   // MIENTRAS SE CUMPLA CONDICION DE MOSTRAR PANTALLA
@@ -135,7 +139,32 @@ inicio:
       LCD_Print(text1, 38, 100, 2,  0x0000, 0xFFFF);    // POSICIÓN DONDE DESPLEGAMOS PALABRA 1
       LCD_Print(text2, 90, 130, 2,  0x0000, 0xFFFF);    // POSICIÓN DONDE DESPLEGAMOS PALABRA 2
 
+      if (keg == 0)
+      {
+        beep(si_,300);
+        beep(la_,300);
+        beep(sol_,300);
+        delay(300);
+      
+        beep(si_,300);
+        beep(la_,300);
+        beep(sol_,300);
+        delay(300);
+      
+        beep(sol_,300);
+        beep(sol_,300);
+        beep(la_,300);
+        beep(la_,300);
+        beep(si_,300);
+        beep(la_,300);
+        beep(sol_,300);
+        delay(300);
+
+        keg = 1;
+      }
+      
       lectura = digitalRead(U1);        // LECTURA DE BOTON UP DE JUGADOR 1
+      
       if (lectura == HIGH && q == 0)    // SI PRECIONAMOS BOTON DEL JUGADOR 1
       {
         q = 1;                          // VARIABLE PARA ANTI REBOTE
