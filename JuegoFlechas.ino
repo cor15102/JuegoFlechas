@@ -89,6 +89,17 @@ const char* keg[10] = {"0","1","2","3","4","5","6","7","8","9"};
 #define si_  987
 #define la_  880
 #define sol_ 830
+
+#define ED 329
+#define Dd 293
+#define FR 190
+#define GRR 208
+#define CR 277
+#define BD 247
+#define DIi 146
+#define EI 164
+#define AA 220
+#define CI 139
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // SETUP
@@ -572,6 +583,28 @@ inicio:
         LCD_Print(text14, 95, 133, 2,  0xF800, 0xFFFF);       // IMPRIMO PALABRA
         LCD_Print(marca1, 125, 163, 2,  0xF800, 0xFFFF);       // IMPRIMO PALABRA
         LCD_Print(marca2, 165, 163, 2,  0xF800, 0xFFFF);       // IMPRIMO PALABRA
+
+        uint8_t keg = 0;
+        
+        if (keg == 0)
+        {
+          beep(ED,300);
+          beep(Dd,300);
+          beep(FR,300);
+          beep(GRR,300);
+          beep(CR,300);
+          beep(BD,300);
+          beep(DIi,300);
+          beep(EI,300);
+          beep(BD,300);
+          beep(AA,300);
+          beep(CI,300);
+          beep(EI,300);
+          beep(AA,600);
+  
+          keg = 1;
+        }
+  
         delay(1000);                                          // ESPERA DE 7 SEGUNDOS
       }
 
@@ -584,6 +617,27 @@ inicio:
         LCD_Print(text17, 95, 133, 2,  0xF800, 0xFFFF);       // IMPRIMO PALABRA
         LCD_Print(marca1, 125, 163, 2,  0xF800, 0xFFFF);       // IMPRIMO PALABRA
         LCD_Print(marca2, 165, 163, 2,  0xF800, 0xFFFF);       // IMPRIMO PALABRA
+
+        uint8_t keg = 0;
+        
+        if (keg == 0)
+        {
+          beep(ED,300);
+          beep(Dd,300);
+          beep(FR,300);
+          beep(GRR,300);
+          beep(CR,300);
+          beep(BD,300);
+          beep(DIi,300);
+          beep(EI,300);
+          beep(BD,300);
+          beep(AA,300);
+          beep(CI,300);
+          beep(EI,300);
+          beep(AA,600);
+  
+          keg = 1;
+        }
         delay(1000);                                          // ESPERA DE 7 SEGUNDOS
       }
 
@@ -596,6 +650,27 @@ inicio:
         LCD_Print(text18, 110, 113, 2,  0xF800, 0xFFFF);      // IMPRIMO PALABRA
         LCD_Print(marca1, 125, 163, 2,  0xF800, 0xFFFF);       // IMPRIMO PALABRA
         LCD_Print(marca2, 165, 163, 2,  0xF800, 0xFFFF);       // IMPRIMO PALABRA
+
+        uint8_t keg = 0;
+        
+        if (keg == 0)
+        {
+          beep(ED,300);
+          beep(Dd,300);
+          beep(FR,300);
+          beep(GRR,300);
+          beep(CR,300);
+          beep(BD,300);
+          beep(DIi,300);
+          beep(EI,300);
+          beep(BD,300);
+          beep(AA,300);
+          beep(CI,300);
+          beep(EI,300);
+          beep(AA,600);
+  
+          keg = 1;
+        }
         
         delay(1000);                                          // ESPERA DE 7 SEGUNDOS
       }
