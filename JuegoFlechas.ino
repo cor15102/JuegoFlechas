@@ -66,9 +66,9 @@ uint8_t velocidad = 0;  // VELOCIDAD ESCOGIDA
 uint8_t cont1 = 0;      // PUNTOS DE JUGADOR 1
 uint8_t cont2 = 0;      // PUNTOS DE JUGADOR 2
 
-int buzzer = 40;
+int buzzer = 40;    // PIN DEL BUZZER PF2 O 40
 
-const char* keg[10] = {"0","1","2","3","4","5","6","7","8","9"};
+const char* keg[10] = {"0","1","2","3","4","5","6","7","8","9"};  // ARREGLO PARA PODER IMPRIMIR NUMEROS EN PANTALLA
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -84,22 +84,25 @@ const char* keg[10] = {"0","1","2","3","4","5","6","7","8","9"};
 #define L2 PA_3
 #define R2 PA_2
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// DEFINIMOS NOTAS MUSICALES Y SUS FRECUENCIAS
 #define nota_1 500
 #define nota_2 800
 #define si_  987
 #define la_  880
 #define sol_ 830
 
-#define ED 329
-#define Dd 293
-#define FR 190
-#define GRR 208
-#define CR 277
-#define BD 247
-#define DIi 146
-#define EI 164
-#define AA 220
-#define CI 139
+#define mi6   1318
+#define re6   1174
+#define fa_5  698
+#define sol_5 784
+#define do_6  1108
+#define si5   988
+#define re5   587
+#define mi5   659
+#define la5   880
+#define do_5  554
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // SETUP
@@ -150,7 +153,7 @@ inicio:
       LCD_Print(text1, 38, 100, 2,  0x0000, 0xFFFF);    // POSICIÓN DONDE DESPLEGAMOS PALABRA 1
       LCD_Print(text2, 90, 130, 2,  0x0000, 0xFFFF);    // POSICIÓN DONDE DESPLEGAMOS PALABRA 2
 
-      if (keg == 0)
+      if (keg == 0)     // Para que la melodía solo suene una vez pues sin esto sonaba 3 veces y hasta despues se podia jugar.
       {
         beep(si_,300);
         beep(la_,300);
@@ -350,20 +353,20 @@ inicio:
               x = x + 30;                             // AVANZO LA FLECHA A SIGUIENTE POSICIÓN
               delay(velocidad);                       // ESPERAR PARA MOSTRAR LA SIGUIENTE FLECHA
 
-              q1 = digitalRead(L1);
+              q1 = digitalRead(L1);         // Pide lectura de los botones mientras desliza la flecha
               q2 = digitalRead(L2);
 
-              if (q1 == HIGH && x <= 260)
-              {
+              if (q1 == HIGH && x <= 260)   // Si el jugador presiona antes de que la flecha haya llegado a su lugar o si mantiene
+              {                             // el boton presionado mientras la flecha se mueve, hara que estado1 sea 1.
                 estado1 = 1;
               }
 
-              if (q1 == LOW && x > 260)
-              {
+              if (q1 == LOW && x > 260)     // Si el jugador no mantuvo presionado el boton durante la trayectoria antes de que la flecha
+              {                             // llegara, estado1 se mantendra en cero. Esta variable nos servira mas abajo
                 estado1 = 0;
               }
 
-              if (q2 == LOW && x <= 260)
+              if (q2 == HIGH && x <= 260)   // Lo mismo para el jugador 2
               {
                 estado2 = 1;
               }
@@ -374,17 +377,17 @@ inicio:
               }
             } //  ==== Cierra el FOR =====
             
-            q1 = digitalRead(L1);
+            q1 = digitalRead(L1);   // Volvemos a pedir lectura de los botones
             q2 = digitalRead(L2);
 
-            if (q1 == HIGH && estado1 == 0)
-            {
-              cont1++;
+            if (q1 == HIGH && estado1 == 0)   // Ahora si usamos estado1. Si mantuvo presionado, estado1 sera 1 y no entrara
+            {                                 // a este if y el jugador no obtendra su punto
+              cont1++;                        // Variable de puntos
               LCD_Bitmap(290, 0, 30, 30, DI);           // MUESTRO FLECHA PARA INDICADORA DE PRESIONAR
-              beep(nota_1,500);
+              beep(nota_1,500);               // Sonidito de que le atino
             }
 
-            if (q2 == HIGH && estado2 == 0)
+            if (q2 == HIGH && estado2 == 0)   // Lo mismo para el jugador 2
             {
               cont2++;
               LCD_Bitmap(290, 120, 30, 30, DI);         // MUESTRO FLECHA PARA INDICADORA DE PRESIONAR
@@ -418,7 +421,7 @@ inicio:
                 estado1 = 0;
               }
 
-              if (q2 == LOW && x <= 260)
+              if (q2 == HIGH && x <= 260)
               {
                 estado2 = 1;
               }
@@ -473,7 +476,7 @@ inicio:
                 estado1 = 0;
               }
 
-              if (q2 == LOW && x <= 260)
+              if (q2 == HIGH && x <= 260)
               {
                 estado2 = 1;
               }
@@ -528,7 +531,7 @@ inicio:
                 estado1 = 0;
               }
 
-              if (q2 == LOW && x <= 260)
+              if (q2 == HIGH && x <= 260)
               {
                 estado2 = 1;
               }
@@ -586,26 +589,26 @@ inicio:
 
         uint8_t keg = 0;
         
-        if (keg == 0)
+        if (keg == 0)       // Suena melodia NOKIA de 1994 una sola vez
         {
-          beep(ED,300);
-          beep(Dd,300);
-          beep(FR,300);
-          beep(GRR,300);
-          beep(CR,300);
-          beep(BD,300);
-          beep(DIi,300);
-          beep(EI,300);
-          beep(BD,300);
-          beep(AA,300);
-          beep(CI,300);
-          beep(EI,300);
-          beep(AA,600);
+          beep(mi6,120);
+          beep(re6,125);
+          beep(fa_5,250);
+          beep(sol_5,250);
+          beep(do_6,120);
+          beep(si5,125);
+          beep(re5,250);
+          beep(mi5,200);
+          beep(si5,150);
+          beep(la5,125);
+          beep(do_5,200);
+          beep(mi5,300);
+          beep(la5,750);
   
           keg = 1;
         }
   
-        delay(1000);                                          // ESPERA DE 7 SEGUNDOS
+        delay(1000);                                          // ESPERA DE 1 SEGUNDOS
       }
 
       if (cont2 > cont1) {                                      // SI GANÓ JUGADOR 2
@@ -620,25 +623,25 @@ inicio:
 
         uint8_t keg = 0;
         
-        if (keg == 0)
+        if (keg == 0)         // Suena melodia NOKIA de 1994 una sola vez
         {
-          beep(ED,300);
-          beep(Dd,300);
-          beep(FR,300);
-          beep(GRR,300);
-          beep(CR,300);
-          beep(BD,300);
-          beep(DIi,300);
-          beep(EI,300);
-          beep(BD,300);
-          beep(AA,300);
-          beep(CI,300);
-          beep(EI,300);
-          beep(AA,600);
+          beep(mi6,120);
+          beep(re6,125);
+          beep(fa_5,250);
+          beep(sol_5,250);
+          beep(do_6,120);
+          beep(si5,125);
+          beep(re5,250);
+          beep(mi5,200);
+          beep(si5,150);
+          beep(la5,125);
+          beep(do_5,200);
+          beep(mi5,300);
+          beep(la5,750);
   
           keg = 1;
         }
-        delay(1000);                                          // ESPERA DE 7 SEGUNDOS
+        delay(1000);                                          // ESPERA DE 1 SEGUNDO
       }
 
       if (cont1 == cont2) {                                     // SI QUEDARON EMPATES
@@ -653,26 +656,26 @@ inicio:
 
         uint8_t keg = 0;
         
-        if (keg == 0)
+        if (keg == 0)             // Suena melodia NOKIA de 1994 una sola vez
         {
-          beep(ED,300);
-          beep(Dd,300);
-          beep(FR,300);
-          beep(GRR,300);
-          beep(CR,300);
-          beep(BD,300);
-          beep(DIi,300);
-          beep(EI,300);
-          beep(BD,300);
-          beep(AA,300);
-          beep(CI,300);
-          beep(EI,300);
-          beep(AA,600);
+          beep(mi6,120);
+          beep(re6,125);
+          beep(fa_5,250);
+          beep(sol_5,250);
+          beep(do_6,120);
+          beep(si5,125);
+          beep(re5,250);
+          beep(mi5,200);
+          beep(si5,150);
+          beep(la5,125);
+          beep(do_5,200);
+          beep(mi5,300);
+          beep(la5,750);
   
           keg = 1;
         }
         
-        delay(1000);                                          // ESPERA DE 7 SEGUNDOS
+        delay(1000);                                          // ESPERA DE 1 SEGUNDO
       }
 
       z = 6;                       // VARIABLE PARA EMPEZAR A JUGAR OTRA VEZ
@@ -1049,8 +1052,8 @@ void LCD_Sprite(int x, int y, int width, int height, unsigned char bitmap[], int
   digitalWrite(LCD_CS, HIGH);
 }
 
-void beep(int note, int duration)
-{
+void beep(int note, int duration)     // Metodo para reproducir las notas musicales.
+{                                     // Codigo sacado de los ejemplos de Energia
   tone(buzzer, note, duration/2);
   delay(duration/2);
   noTone(buzzer);
